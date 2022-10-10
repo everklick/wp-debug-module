@@ -179,8 +179,10 @@ function debug_redirect( $location, $stop_redirect = null ) {
 
 /**
  * Collect debug details about all WP hooks that fire in the current request.
+ *
+ * @since 2.5.2
  */
-function debug_hooks( $enabled = true, $patterns = [], $is_whitelist = false ) {
+function debug_all_hooks( $enabled = true, $patterns = [], $is_whitelist = false ) {
 	call_user_func_array(
 		[ $GLOBALS['_evr_debugger'], 'debug_hooks' ],
 		func_get_args()
@@ -240,6 +242,188 @@ function log_slack() {
 function debug_flag( $key, $value = null ) {
 	return $GLOBALS['_evr_debugger']->flag( $key, $value );
 }
+
+/**
+ * List defined constants
+ *
+ * @since 2.5.2
+ *
+ * @param bool|string $filter limit to matching names or values
+ */
+function debug_constants( $filter = false ) {
+	$constants = get_defined_constants();
+
+	if ( false !== $filter ) {
+		$temp = [];
+
+		foreach ( $constants as $key => $constant ) {
+			if ( false !== stripos( $key, $filter ) || false !== stripos( $constant, $filter ) ) {
+				$temp[ $key ] = $constant;
+			}
+		}
+
+		$constants = $temp;
+	}
+
+	$GLOBALS['_evr_debugger']->debug( $constants );
+}
+
+/**
+ * List cron entries with time remaining till next run.
+ *
+ * WP Only
+ *
+ * @since 2.5.2
+ */
+function debug_cron() {
+	if ( ! function_exists( '_get_cron_array' ) ) {
+		return;
+	}
+
+	$cron = _get_cron_array();
+
+	echo '<pre>';
+
+	$offset = get_option( 'gmt_offset' ) * 3600;
+
+	foreach ( $cron as $time => $entry ) {
+		$when = '<strong>In ' . human_time_diff( $time ) . '</strong> (' . $time . ' ' . date_i18n( DATE_RSS, $time + $offset ) . ')';
+		echo "<br />&gt;&gt;&gt;&gt;&gt;\t{$when}<br />";
+
+		foreach ( array_keys( $entry ) as $function ) {
+			echo "\t{$function}<br />";
+			debug_hooks( $function );
+		}
+	}
+
+	echo '</pre>';
+}
+
+/**
+ * List hooks as currently defined
+ *
+ * WP Only
+ *
+ * @since 2.5.2
+ *
+ * @param bool|string $filter limit to matching names
+ */
+function debug_hooks( $filter = false ) {
+	if ( ! function_exists( 'get_option' ) ) {
+		return;
+	}
+
+	global $wp_filter;
+
+	$skip_filter = empty( $filter );
+	$hooks       = $wp_filter;
+	ksort( $hooks );
+
+	foreach ( $hooks as $tag => $hook ) {
+		if ( $skip_filter || false !== strpos( $tag, $filter ) ) {
+			$GLOBALS['_evr_debugger']->dump_hook( $tag, $hook );
+		}
+	}
+}
+
+/**
+ * List active plugins
+ *
+ * WP Only
+ *
+ * @since 2.5.2
+ */
+function debug_plugins() {
+	$GLOBALS['_evr_debugger']->debug( get_option( 'active_plugins' ) );
+}
+
+/**
+ * List post's fields, custom fields, and terms
+ *
+ * WP Only
+ *
+ * @since 2.5.2
+ *
+ * @param int $post_id
+ */
+function debug_post( $post_id = null ) {
+
+	if ( empty( $post_id ) ) {
+		$post_id = get_the_ID();
+	}
+
+	$GLOBALS['_evr_debugger']->debug(
+		get_post( $post_id ),
+		get_post_custom( $post_id ),
+		wp_get_post_terms( $post_id, get_post_taxonomies( $post_id ) )
+	);
+}
+
+/**
+ * List performed MySQL queries
+ *
+ * WP Only
+ *
+ * @since 2.5.2#
+ */
+function debug_queries() {
+	global $wpdb;
+
+	if ( ! defined( 'SAVEQUERIES' ) || ! SAVEQUERIES ) {
+
+		trigger_error( 'SAVEQUERIES needs to be defined', E_USER_NOTICE );
+
+		return;
+	}
+
+	echo '<pre>';
+
+	foreach ( $wpdb->queries as $query ) {
+
+		[ $request, $duration, $backtrace ] = $query;
+		$duration  = sprintf( '%f', $duration );
+		$backtrace = explode( ',', $backtrace );
+		$backtrace = trim( array_pop( $backtrace ) );
+
+		if ( 'get_option' == $backtrace ) {
+
+			preg_match_all( '/\option_name.*?=.*?\'(.+?)\'/', $request, $matches );
+			$backtrace .= "({$matches[1][0]})";
+		}
+
+		echo "<br /><code>{$request}</code><br />{$backtrace} in {$duration}s<br />";
+	}
+
+	echo '<br /></pre>';
+}
+
+/**
+ * Run EXPLAIN on provided MySQL query or last query performed.
+ *
+ * WP Only
+ *
+ * @since 2.5.2
+ *
+ * @param string $query
+ */
+function debug_sql_query( $query = '' ) {
+	/** @var wpdb $wpdb */
+	global $wpdb;
+
+	if ( empty( $query ) ) {
+		$query = $wpdb->last_query;
+	}
+
+	$GLOBALS['_evr_debugger']->debug(
+		$query,
+		$wpdb->get_results( 'EXPLAIN EXTENDED ' . $query ),
+		$wpdb->get_results( 'SHOW WARNINGS' )
+	);
+}
+
+
+// ----------------------------------------------------------------------------
+
 
 /**
  * In WordPress, we automatically add a back-trace to all redirects.
@@ -1195,6 +1379,60 @@ class Evr_Debug {
 	}
 
 	/**
+	 * Output hook info
+	 *
+	 * @param string        $tag  hook name
+	 * @param WP_Hook|array $hook hook data
+	 */
+	public function dump_hook( $tag, $hook ) {
+		if ( ! class_exists( 'WP_Hook' ) ) {
+			return;
+		}
+		if ( $hook instanceof WP_Hook ) {
+			$hook = $hook->callbacks;
+		}
+
+		ksort( $hook );
+
+		$output   = [];
+		$output[] = "<pre>&gt;&gt;&gt;&gt;&gt;\t<strong>{$tag}</strong><br />";
+
+		foreach ( $hook as $priority => $functions ) {
+			$output[] = $priority;
+
+			foreach ( $functions as $function ) {
+				$output[] = "\t";
+
+				$callback = $function['function'];
+
+				if ( is_string( $callback ) ) {
+					$output[] = $callback;
+				} elseif ( is_a( $callback, 'Closure' ) ) {
+					$closure  = new ReflectionFunction( $callback );
+					$output[] = 'closure from ' . $closure->getFileName() . '::' . $closure->getStartLine();
+				} elseif ( is_object( $callback ) ) {
+					$class = new ReflectionClass( $callback );
+					$name  = $class->getName();
+					if ( 0 === strpos( $name, 'class@anonymous' ) ) {
+						$output[] = 'anonymous class from ' . $class->getFileName() . '::' . $class->getStartLine();
+					} else {
+						$output[] = $name;
+					}
+				} elseif ( is_string( $callback[0] ) ) { // static method call
+					$output[] = $callback[0] . '::' . $callback[1];
+				} elseif ( is_object( $callback[0] ) ) {
+					$output[] = get_class( $callback[0] ) . '->' . $callback[1];
+				}
+
+				$output[] = ( 1 == $function['accepted_args'] ) ? '<br />' : " ({$function['accepted_args']}) <br />";
+			}
+		}
+
+		$output[]      = '</pre>';
+		$this->dumps[] = join( '', $output );
+	}
+
+	/**
 	 * Outputs all debug messages that were generated via `dump()`.
 	 * This function also clears the internal "dump" collection; i.e. calling
 	 * `flush()` multiple times will only output the dumps once.
@@ -1740,9 +1978,10 @@ class Evr_Debug {
 		];
 	}
 
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+
+	// ----------------------------------------------------------------------------
 	// Protected / Internal functions
-	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// ----------------------------------------------------------------------------
 
 	/**
 	 * Return details about the function that called the debug function.
@@ -3049,11 +3288,6 @@ class Evr_Debug {
 		return $item;
 	}
 }
-
-debug_hooks( true, [
-	'/save/',
-	'/update/',
-], true );
 
 // This indicates, that debugging is active.
 return true;

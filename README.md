@@ -59,7 +59,7 @@ include_once 'debug.php';
 
 **Send to Slack:**
 
- * `log_slack( $message, $channel, $trace_lines, $is_private )`
+ * `log_slack( $message, $channel, $trace_lines, $is_private )`  
    `debug_slack()` is an alias for `log_slack()`
 
 -----
@@ -74,6 +74,57 @@ $is_active = require 'debug.php';
 ```
 
 ### Flags to customize the behavior
+
+```php
+// Dynamically change flags during runime.
+debug_flag( $name, $value )
+```
+
+List of flags:
+
+- `enabled`  
+    (boolean)  
+    If set to true or false it will override the EVR_DEBUG value.
+    If set to null the `EVR_DEBUG` value is used.
+  
+- `format`  
+    (html | text)  
+    Toggles the plain-text / HTML output of the debug.
+    All Ajax requests will ignore this flag and use plain-text format.  
+  
+- `sort`  
+    (boolean)  
+    Toggles the alphabetical sorting of array/object keys in the dump.  
+    See `define( 'EVR_DEBUG_SORT', ... );`
+  
+- `mark_fields`  
+    (array / comma separated string)  
+    Defines, which array/object fields are highlighted as "primary key"
+    fields in the debug dump.  
+    See `define( 'EVR_DEBUG_MARK_FIELDS', ... );`
+  
+- `show_trace`  
+    (boolean)  
+    If set to true each debug output will contain a stack-trace.
+    Otherwise, only the variable will be dumped. Default: true.  
+    See `define( 'EVR_DEBUG_TRACE', ... );`
+  
+- `show_request`  
+    (boolean)  
+    Whether to show request details (like GET/POST/COOKIE values) at the
+    end of every debug dump. Default: true.
+  
+- `show_stats`  
+    (boolean)  
+    Whether to show request stats like memory usage and php version at
+    the end of every debug dump. Default: true.
+  
+- `stop_redirect`  
+    (boolean)  
+    WordPress specific flag. Whether to prevent wp_redirect from
+    redirecting users. If set to true, a link with the target URL is
+    displayed instead of automatic redirection.  
+   See `define( 'EVR_STOP_REDIRECT', ... );`
 
 ```php
 // Disable this module.
@@ -137,18 +188,17 @@ define( 'EVR_DEBUG_JS', false );
 All WordPress redirects include a back-trace in the HTTP response headers.
 
 ```php
-// Instead of redirecting display a back-trace and the target URL on the
-// screen.
+// Instead of redirecting display a back-trace and the target URL on the screen.
 define( 'EVR_STOP_REDIRECT', true );
 ```
 
 ```php
-// WordPress only: No Debug output in admin-ajax.php responses.
+// No Debug output in admin-ajax.php responses.
 define( 'EVR_AJAX_DEBUG', false );
 ```
 
 ```php
-// In WordPress: Enable the debug module without enabling WP_DEBUG.
+// Enable the debug module without enabling WP_DEBUG.
 define( 'EVR_DEBUG', true );
 ```
 
