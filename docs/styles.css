@@ -1,0 +1,142 @@
+html,
+body {
+	font-family: 'Helvetica Neue', 'Open Sans', 'Arial', serif;
+	font-size: 18px;
+}
+
+pre,
+code {
+	background: rgba(0, 0, 0, 0.06);
+	padding: 10px 20px;
+	border-radius: 3px;
+	display: inline-block;
+	margin: 0 0 6px;
+	max-width: 100%;
+	overflow: auto;
+	box-shadow: 2px 0 0 rgba(0, 0, 0, 0.1) inset;
+	font-size: 16px;
+	line-height: 1.35;
+}
+
+kbd {
+	background: rgba(0, 0, 0, 0.06);
+	padding: 2px 5px;
+	border-radius: 3px;
+	display: inline-block;
+	box-shadow: 2px 0 0 rgba(0, 0, 0, 0.1) inset;
+	font-size: 1em;
+	line-height: 1;
+}
+
+li code {
+	margin: 0;
+	display: inline;
+}
+
+li {
+	margin: 5px 0;
+}
+
+.content {
+	max-width: 960px;
+	margin: 30px auto 80px;
+}
+
+hr {
+	margin: 40px auto;
+	border: 0;
+	width: 80%;
+	border-bottom: 1px solid #E0E0E0;
+}
+
+h1, h2, h3 {
+	text-align: center;
+}
+
+.cta {
+	display: block;
+	font-size: 18px;
+	line-height: 36px;
+	background: #0052CC;
+	color: #FFF !important;
+	text-decoration: none;
+	font-weight: bold;
+	border-radius: 4px;
+	width: 180px;
+	margin: 20px auto;
+	text-align: center;
+	box-shadow: 0 1px 1px rgba(255, 255, 255, 0.3) inset, 0 4px 20px -2px rgba(0, 0, 0, 0.5);
+	text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.5);
+}
+
+.cta:hover,
+.cta:focus {
+	background: #0065FF;
+	color: #FFF;
+	text-decoration: none;
+}
+
+a,
+a:visited {
+	text-decoration: none;
+	color: #007AB8;
+}
+
+a:focus,
+a:hover,
+a:active {
+	text-decoration: underline;
+}
+
+.block-img {
+	border-radius: .5rem;
+	border: 1px solid #DDD;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.12);
+	max-width: 100%;
+	height: auto;
+}
+
+.toc {
+	list-style: none;
+}
+
+.toc .group-end {
+	margin-bottom: 20px;
+}
+
+.toc li {
+	clear: both;
+}
+
+.toc li a {
+	vertical-align: bottom;
+}
+
+.toc li.info {
+	font-size: 0.9em;
+}
+
+.toc li small {
+	display: inline-block;
+	font-size: 0.8em;
+	padding: 1px 5px;
+	margin: 1px 4px 1px 0;
+	background: rgba(0, 0, 0, 0.08);
+	border-radius: 3px;
+}
+
+.toc li .always {
+	display: inline-block;
+	margin: 0 10px;
+	color: #A00;
+	font-weight: bold;
+	font-style: normal;
+}
+
+.toc li .always:after {
+	content: ' ALWAYS';
+	color: #555;
+	font-size: 10px;
+	font-weight: normal;
+	vertical-align: super;
+}

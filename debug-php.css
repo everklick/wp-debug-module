@@ -1,0 +1,277 @@
+.wp-debug {
+	clear: both;
+	border: 1px solid #C00;
+	background: rgba(255, 200, 200, 1);
+	padding: 10px;
+	margin: 10px;
+	position: relative;
+	z-index: 999999;
+	box-shadow: 0 1px 5px rgba(0, 0, 0, 0.3);
+	font-size: 14px;
+	font-family: sans-serif;
+	font-weight: 400;
+	line-height: 1;
+}
+
+.wp-debug .dev-tree {
+	color: #000;
+	opacity: .2;
+	font-family: monospace;
+	font-size: 19px;
+	line-height: 16px;
+	float: left;
+}
+
+.wp-debug .dev-item {
+	float: left;
+	line-height: 18px;
+	white-space: pre-wrap;
+}
+
+.wp-debug .dev-item.val {
+	font-family: Monaco, monospace;
+	font-weight: 500;
+}
+
+.wp-debug .dev-item .bool-true,
+.wp-debug .dev-item .bool-false {
+	display: inline-block;
+	width: 6px;
+	height: 6px;
+	border-radius: 5px;
+	margin: -1px 3px 0;
+	vertical-align: middle;
+}
+
+.wp-debug .dev-item .bool-true {
+	background: rgba(0, 148, 32, 0.8);
+}
+
+.wp-debug .dev-item .bool-false {
+	background: rgba(128, 32, 32, 0.4);
+}
+
+.wp-debug .dev-toggle-item,
+.wp-debug .dev-toggle-alt {
+	text-decoration: none;
+	background: rgba(255, 255, 255, 0.2);
+	display: inline-block;
+}
+
+.wp-debug .dev-toggle-alt {
+	margin: 0 0 0 4px;
+	padding: 0 0.3em;
+}
+
+.wp-debug .wp-debug-dump {
+	margin: 0;
+	border-collapse: collapse;
+	padding: 0;
+	border: 0;
+}
+
+.wp-debug .wdev-trace-toggle {
+	display: block;
+	margin: 10px 0 0 0;
+	text-align: left;
+}
+
+.wp-debug .wdev-trace-stats {
+	display: block;
+	text-align: left;
+	margin: 10px 0 0 -4px;
+	font-size: 10px;
+	opacity: 0.4;
+	color: #333;
+}
+
+.wp-debug .wdev-trace-stats:hover {
+	opacity: 1;
+}
+
+.wp-debug .wdev-trace-stats b {
+	display: inline-block;
+	margin: 0 4px;
+}
+
+.wp-debug .wp-debug-dump td {
+	font-size: 14px;
+	line-height: 1.15;
+	font-family: sans-serif;
+	background: transparent;
+	cursor: default;
+	padding: 2px 0;
+	border: 0;
+}
+
+.wp-debug .wp-debug-dump tr:hover td {
+	background-color: #FFF;
+	background-color: rgba(255, 255, 255, 0.3);
+}
+
+.wp-debug-clear {
+	clear: both;
+	display: table;
+	padding: 0;
+	margin: 0;
+}
+
+.wp-debug-label {
+	font-size: 14px;
+	font-weight: 600;
+	line-height: 20px;
+	float: right;
+	margin: -10px;
+	color: #FFF;
+	text-shadow: 0 1px 1px #0008;
+	background-color: #b34d4d;
+	padding: 0 8px;
+	cursor: pointer;
+	max-width: 50%;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	transistion: all .3s;
+}
+
+.wp-debug-label:hover {
+	background-color: #E66;
+}
+
+.wp-debug pre {
+	font-size: 14px !important;
+	margin: 1px 0 !important;
+	background: rgba(255, 200, 200, 0.8);
+}
+
+.wp-debug .val-ts {
+	font-style: italic;
+	color: #555;
+	opacity: 0.8;
+	font-size: 0.95em;
+}
+
+.wp-debug .val-ts:before {
+	content: '\028';
+}
+
+.wp-debug .val-ts:after {
+	content: '\029';
+}
+
+.wdev-trace td {
+	padding: 3px !important;
+	font-size: 14px;
+	vertical-align: top;
+	transition: all 0.3s;
+}
+
+.wdev-trace {
+	margin: 4px 0 0 0;
+	background: #FFF2;
+	border-collapse: collapse;
+}
+
+.wdev-trace tr.mark td {
+	background: #EC9;
+	color: #444;
+}
+
+.wdev-trace tr.mark td.trc-num {
+	background: #EC9;
+	color: #222;
+}
+
+.wdev-trace tr td {
+	cursor: default;
+	color: #666;
+	opacity: 0.7;
+}
+
+.wdev-trace tr:hover td {
+	color: #222;
+	background: #fff8;
+	opacity: 0.85;
+}
+
+.wdev-trace-toggle {
+	cursor: pointer;
+	color: #333;
+}
+
+.wp-debug .trc-num {
+	width: 32px;
+	min-width: 32px;
+	text-align: right;
+}
+
+.wp-debug .trc-loc {
+	width: 60%;
+}
+
+.wp-debug .trc-arg {
+	width: 40%;
+	white-space: pre-wrap;
+}
+
+.wp-debug .trc-key {
+	width: 25%;
+	white-space: pre-wrap;
+}
+
+.wp-debug .trc-val {
+	width: 75%;
+}
+
+.wp-debug .trc-group {
+	border-top: 1px solid #444;
+	opacity: 1;
+	background: rgba(255, 255, 255, .1);
+}
+
+.wp-debug .trc-param {
+	padding: 0 3px;
+	display: block;
+	margin: 2px 0 2px 8px;
+	max-height: 4.3em;
+	overflow: hidden;
+	transition: all 0.3s;
+}
+
+.wp-debug .trc-param:hover {
+	max-height: calc(100vh - 30px);
+	overflow: auto;
+}
+
+.wp-debug .trc-param + .trc-param {
+	margin-top: 4px;
+}
+
+.wp-debug .trc-param font {
+	background: rgba(0, 0, 0, .05);
+	display: inline-block;
+	padding: 2px;
+	transition: all 0.3s;
+}
+
+.wp-debug .trc-param:hover font {
+	background: rgba(0, 0, 0, 0.1);
+	color: #000;
+}
+
+.wp-debug .trc-param:after {
+	content: ',';
+}
+
+.wp-debug .trc-param:last-child:after {
+	content: '';
+}
+
+.wp-debug .trc-line {
+	float: right;
+	background: rgba(0, 0, 0, 0.07);
+	padding: 2px 2px;
+	margin: -2px;
+	font-size: 12px;
+	line-height: 10px;
+}
