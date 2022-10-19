@@ -2264,7 +2264,7 @@ class Evr_Debug {
 		$path = __DIR__ . "/$file.$type";
 
 		// Bail, if the asset was already enqueued.
-		if ( $_enqueued[ $path ] ) {
+		if ( ! empty( $_enqueued[ $path ] ) ) {
 			return;
 		}
 		$_enqueued[ $path ] = true;
