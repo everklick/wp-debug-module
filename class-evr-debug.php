@@ -855,7 +855,7 @@ class Evr_Debug {
 	 *
 	 * @api
 	 */
-	public function get_dump( $first_arg ) {
+	public function get_dump() {
 		if ( ! $this->is_enabled() ) {
 			return '';
 		}
@@ -865,6 +865,12 @@ class Evr_Debug {
 		if ( ! $plain_text ) {
 			$this->add_scripts();
 			$block_id = 'wp-debug-' . md5( rand() );
+
+			if ( func_num_args() > 0 ) {
+				$first_arg = func_get_arg( 0 );
+			} else {
+				$first_arg = null;
+			}
 
 			if ( is_scalar( $first_arg ) && ! empty( $first_arg ) ) {
 				$block_label = substr( strip_tags( (string) $first_arg ), 0, 30 );
@@ -928,7 +934,7 @@ class Evr_Debug {
 	 *
 	 * @api
 	 */
-	public function dump( $first_arg ) {
+	public function dump() {
 		$this->dumps[] = call_user_func_array( [ $this, 'get_dump' ], func_get_args() );
 
 		/*
@@ -2290,7 +2296,7 @@ class Evr_Debug {
 			}
 			if ( false !== $rel_path ) {
 				if ( EVR_DEBUG_IS_WORDPRESS ) {
-					$_evr_debug_url = home_url( $rel_path );
+					$_evr_debug_url = home_url( $rel_path . '/' );
 				} else {
 					$_evr_debug_url = $rel_path . '/';
 				}
