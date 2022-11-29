@@ -271,6 +271,31 @@ function debug_constants( $filter = false ) {
 	Evr_Debug::inst()->dump( $constants );
 }
 
+
+/**
+ * Dumps the current memory usage into a JSON file.
+ *
+ * Requires the `meminfo`{@see https://github.com/BitOne/php-meminfo} extension
+ * to be installed and active.
+ *
+ * @return void
+ */
+function debug_memory( string $file = 'memdump.json' ) {
+	if ( ! function_exists( 'meminfo_dump' ) ) {
+		return;
+	}
+
+	if ( EVR_DEBUG_IS_WORDPRESS ) {
+		$path = WP_CONTENT_DIR . '/' . $file;
+	} else {
+		$path = dirname( __DIR__ ) . '/' . $file;
+	}
+
+	$stream = fopen( $path, 'w' );
+	meminfo_dump( $stream );
+	fclose( $stream );
+}
+
 if ( EVR_DEBUG_IS_WORDPRESS ) {
 	require_once __DIR__ . '/debug-wp.php';
 }
