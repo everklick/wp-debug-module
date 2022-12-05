@@ -2,7 +2,7 @@
 /**
  * Debug module for PHP.
  *
- * Version: 2.5.3
+ * Version: 2.5.4
  * Author:  Philipp Stracker (stracker.phil@gmail.com)
  * Website: https://github.com/everklick/wp-debug-module
  */
@@ -278,22 +278,26 @@ function debug_constants( $filter = false ) {
  * Requires the `meminfo`{@see https://github.com/BitOne/php-meminfo} extension
  * to be installed and active.
  *
+ * @param string $file Name of the dump file. The placeholder "##" is
+ *                     replaced with the current timestamp.
+ *
  * @return void
  */
-function debug_memory( string $file = 'memdump.json' ) {
-	if ( ! function_exists( 'meminfo_dump' ) ) {
-		return;
-	}
-
+function debug_memory( string $file = 'memdump-##' ) {
+	$file = str_replace( '##', time(), $file );
 	if ( EVR_DEBUG_IS_WORDPRESS ) {
 		$path = WP_CONTENT_DIR . '/' . $file;
 	} else {
 		$path = dirname( __DIR__ ) . '/' . $file;
 	}
 
-	$stream = fopen( $path, 'w' );
-	meminfo_dump( $stream );
-	fclose( $stream );
+	if ( function_exists( 'memprof_dump_callgrind' ) && memprof_enabled() ) {
+		memprof_dump_callgrind( fopen( "$path.cache", 'w' ) );
+		// memprof_dump_pprof( fopen( "$path.heap", 'w' ) );
+		// file_put_contents( "$path.json", json_encode( memprof_dump_array(), JSON_PRETTY_PRINT ) );
+	} elseif ( function_exists( 'meminfo_dump' ) ) {
+		meminfo_dump( fopen( "$path.json", 'w' ) );
+	}
 }
 
 if ( EVR_DEBUG_IS_WORDPRESS ) {
