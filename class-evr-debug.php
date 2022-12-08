@@ -2254,10 +2254,10 @@ class Evr_Debug {
 	 *
 	 * @since 2.5.3
 	 *
-	 * @param $file
-	 * @param $type
+	 * @param string|null $file
+	 * @param string|null $type
 	 */
-	protected function enqueue_asset( $file, $type ) {
+	protected function enqueue_asset( string $file = null, string $type = null ) {
 		static $_evr_debug_url = null;
 		static $_enqueued = [];
 
